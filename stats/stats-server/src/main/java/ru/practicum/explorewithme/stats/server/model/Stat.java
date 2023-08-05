@@ -1,4 +1,4 @@
-package ru.practicum.explorewithme.stats.dto;
+package ru.practicum.explorewithme.stats.server.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ViewStatsDTO {
+@NoArgsConstructor
+public class Stat {
     private String app;
     private String uri;
-    private int hits;
+    private long hits;
 }

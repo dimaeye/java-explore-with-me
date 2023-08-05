@@ -13,7 +13,7 @@ import javax.validation.constraints.Pattern;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class EndpointHitDTO {
+public class HitDTO {
     private int id;
     @NotBlank
     private String app;
