@@ -10,7 +10,7 @@ public class StatMapper {
         return StatDTO.builder()
                 .app(stat.getApp())
                 .uri(stat.getUri())
-                .hits((int) stat.getHits())
+                .hits(stat.getHits())
                 .build();
     }
 }
