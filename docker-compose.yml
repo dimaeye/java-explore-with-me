@@ -27,9 +27,10 @@ services:
       - POSTGRES_DB=stats
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
-#  ewm-service:
-#    ports:
-#      - "8080:8080"
-#
-#  ewm-db:
-#    image: postgres:14-alpine
+  ewm-service:
+    image: amazoncorretto:11
+    ports:
+      - "8080:8080"
+
+  ewm-db:
+    image: postgres:13.7-alpine
