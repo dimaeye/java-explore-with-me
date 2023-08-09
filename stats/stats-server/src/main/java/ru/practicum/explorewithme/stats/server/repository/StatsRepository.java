@@ -2,14 +2,12 @@ package ru.practicum.explorewithme.stats.server.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import ru.practicum.explorewithme.stats.server.model.Hit;
 import ru.practicum.explorewithme.stats.server.model.Stat;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
 public interface StatsRepository extends JpaRepository<Hit, Integer> {
     @Query("SELECT new ru.practicum.explorewithme.stats.server.model.Stat(" +
             "h.app, h.uri, COUNT(DISTINCT h.ip)) " +

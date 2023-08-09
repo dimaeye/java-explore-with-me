@@ -16,7 +16,6 @@ import ru.practicum.explorewithme.stats.server.model.Stat;
 import ru.practicum.explorewithme.stats.server.service.StatsService;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,7 +56,7 @@ class StatsControllerTest {
                 .app(generator.nextObject(String.class))
                 .uri(generator.nextObject(String.class))
                 .ip("127.0.0.1")
-                .timestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .timestamp(LocalDateTime.now())
                 .build();
 
         assertDoesNotThrow(
