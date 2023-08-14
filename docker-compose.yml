@@ -1,15 +1,36 @@
 version: '3.1'
 services:
   stats-server:
+    build: ./stats/stats-server
+    image: stats_server_image
+    container_name: stats_server
     ports:
       - "9090:9090"
+    depends_on:
+      - stats-db
+    environment:
+      #      - TZ=Europe/Moscow
+      - DATASOURCE_URL=jdbc:postgresql://db:5432/stats
+      - DB_USER=test
+      - DB_PASSWORD=test
+      - SERVER_PORT=9090
 
   stats-db:
-    image: postgres:14-alpine
-
+#    image: postgres:14-alpine
+    image: postgres:13.7-alpine
+    container_name: stats_db
+    ports:
+      - "6541:5432"
+    volumes:
+      - /var/lib/postgresql/data-stats/
+    environment:
+      - POSTGRES_DB=stats
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
   ewm-service:
+    image: amazoncorretto:11
     ports:
       - "8080:8080"
 
   ewm-db:
-    image: postgres:14-alpine
+    image: postgres:13.7-alpine
