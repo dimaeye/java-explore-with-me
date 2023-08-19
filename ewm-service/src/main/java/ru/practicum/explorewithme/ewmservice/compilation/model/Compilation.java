@@ -18,6 +18,7 @@ public class Compilation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(length = 2048)
     private String title;
     private Boolean pinned;
     @JoinTable(

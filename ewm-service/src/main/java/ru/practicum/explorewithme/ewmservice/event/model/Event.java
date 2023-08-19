@@ -20,6 +20,7 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private int id;
+    @Column(length = 2000)
     private String annotation;
     @JoinColumn(name = "category_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,6 +28,7 @@ public class Event {
     private Category category;
     @Column(name = "confirmed_requests")
     private Integer confirmedRequests;
+    @Column(length = 7000)
     private String description;
     @Column(name = "event_date")
     private LocalDateTime eventDate;

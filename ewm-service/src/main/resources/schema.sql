@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE IF NOT EXISTS users
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -8,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users
     CONSTRAINT UQ_USER_EMAIL UNIQUE (email)
 );
 
+DROP TABLE IF EXISTS categories CASCADE;
 CREATE TABLE IF NOT EXISTS categories
 (
     id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -16,6 +18,7 @@ CREATE TABLE IF NOT EXISTS categories
     CONSTRAINT UQ_CATEGORY_NAME UNIQUE (name)
 );
 
+DROP TABLE IF EXISTS locations CASCADE;
 CREATE TABLE IF NOT EXISTS locations
 (
     id  BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -23,13 +26,14 @@ CREATE TABLE IF NOT EXISTS locations
     lon FLOAT
 );
 
+DROP TABLE IF EXISTS events CASCADE;
 CREATE TABLE IF NOT EXISTS events
 (
     id                 BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     annotation         VARCHAR(2000)               NOT NULL,
     category_id        BIGINT                      NOT NULL,
     confirmed_requests BIGINT,
-    description        CHARACTER VARYING           NOT NULL,
+    description        VARCHAR(7000)         NOT NULL,
     event_date         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     location_id        BIGINT                      NOT NULL,
     paid               BOOLEAN                     NOT NULL,
@@ -47,6 +51,7 @@ CREATE TABLE IF NOT EXISTS events
     CONSTRAINT fk_events_to_users FOREIGN KEY (initiator) REFERENCES users (id) ON DELETE CASCADE
 );
 
+DROP TABLE IF EXISTS requests CASCADE;
 CREATE TABLE IF NOT EXISTS requests
 (
     id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -60,6 +65,7 @@ CREATE TABLE IF NOT EXISTS requests
     CONSTRAINT UQ_REQUESTER_ID_BY_EVENT_ID UNIQUE (requester_id, event_id)
 );
 
+DROP TABLE IF EXISTS compilations CASCADE;
 CREATE TABLE IF NOT EXISTS compilations
 (
     id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -69,6 +75,7 @@ CREATE TABLE IF NOT EXISTS compilations
     CONSTRAINT UQ_COMPILATION_TITLE UNIQUE (title)
 );
 
+DROP TABLE IF EXISTS compilations_events CASCADE;
 CREATE TABLE IF NOT EXISTS compilations_events
 (
     compilation_id BIGINT NOT NULL,
