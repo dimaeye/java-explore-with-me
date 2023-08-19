@@ -18,6 +18,7 @@ import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,16 +41,22 @@ public class AdminEventController {
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
             @Positive @RequestParam(defaultValue = "10") Integer size
     ) {
-        if (states != null)
-            states.forEach(state ->
-                    EventState.from(state).orElseThrow(() ->
-                            new ValidationException("Неизвестное состояние события " + state)
-                    )
-            );
+        List<EventState> eventStates = null;
+        if (states != null) {
+            eventStates = new ArrayList<>();
+            for (String state : states) {
+                EventState eventState = EventMapper.eventStateFromStr(state).orElseThrow(() ->
+                        new ValidationException("Неизвестное состояние события - " + state)
+                );
+                eventStates.add(eventState);
+            }
+        }
+        if (startLocal != null && endLocal != null && endLocal.isBefore(startLocal))
+            throw new ValidationException("rangeEnd is before rangeStart");
 
         FindEventsByAdminParams findEventsByAdminParams = FindEventsByAdminParams.builder()
                 .users(users)
-                .states(states)
+                .states(eventStates)
                 .categories(categories)
                 .startLocal(startLocal)
                 .endLocal(endLocal)

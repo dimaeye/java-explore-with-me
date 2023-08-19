@@ -19,15 +19,24 @@ import ru.practicum.explorewithme.ewmservice.event.repository.LocationRepository
 import ru.practicum.explorewithme.ewmservice.user.exception.UserNotFoundException;
 import ru.practicum.explorewithme.ewmservice.user.model.User;
 import ru.practicum.explorewithme.ewmservice.user.repository.UserRepository;
+import ru.practicum.explorewithme.stats.client.StatsClient;
+import ru.practicum.explorewithme.stats.dto.HitDTO;
+import ru.practicum.explorewithme.stats.dto.StatDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
+    private static final String APP = "main-service";
+    private static final String URI = "/events";
 
     private final EventRepository eventRepository;
+    private final StatsClient statsClient;
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -58,6 +67,12 @@ public class EventServiceImpl implements EventService {
         event.setConfirmedRequests(0);
         event.setLocation(getLocationWithId(event.getLocation()));
         event.setViews(0);
+        if (event.getPaid() == null)
+            event.setPaid(false);
+        if (event.getParticipantLimit() == null)
+            event.setParticipantLimit(0);
+        if (event.getRequestModeration() == null)
+            event.setRequestModeration(false);
 
         return eventRepository.save(event);
     }
@@ -121,26 +136,59 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public List<Event> getAllEvents(FindEventsByUserParams findEventsByUserParams) {
+    @Transactional
+    public List<Event> getAllEvents(FindEventsByUserParams findEventsByUserParams, String ip) {
         Pageable pageable = PageRequest.of(
                 findEventsByUserParams.getFrom() / findEventsByUserParams.getSize(),
                 findEventsByUserParams.getSize()
         );
 
-        return eventRepository.findAll(findEventsByUserParams.getFilteredEvents(), pageable).getContent();
+        List<Event> events = eventRepository.findAll(findEventsByUserParams.getFilteredEvents(), pageable).getContent();
+
+        saveHit(ip, URI);
+        Map<Integer, Event> publishedEvents = events.stream()
+                .filter(event -> event.getState() == EventState.PUBLISHED)
+                .collect(Collectors.toMap(Event::getId, Function.identity()));
+
+        if (!publishedEvents.isEmpty()) {
+            Map<Integer, StatDTO> stats = statsClient.getStats(
+                    publishedEvents.values().stream().map(Event::getPublishedOn).sorted().findFirst().get(),
+                    LocalDateTime.now(),
+                    publishedEvents.keySet().stream().map(id -> URI + "/" + id).collect(Collectors.toList()),
+                    true
+            ).stream().collect(Collectors.toMap(
+                    statDTO -> {
+                        String[] splitUri = statDTO.getUri().split("/");
+                        return Integer.valueOf(splitUri[splitUri.length - 1]);
+                    }, Function.identity()
+            ));
+
+            publishedEvents.forEach((id, event) -> {
+                saveHit(ip, URI + "/" + id);
+                if (!stats.containsKey(id))
+                    event.setViews(event.getViews() + 1);
+            });
+        }
+
+        return events;
     }
 
     @Override
     @Transactional
-    public Event getEventById(int eventId) {
+    public Event getEventById(int eventId, String ip) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException(eventId));
 
         if (event.getState() != EventState.PUBLISHED)
             throw new EventNotFoundException("Событие не опубликовано");
 
-        event.setViews(event.getViews() + 1);
+        String url = URI + "/" + eventId;
+        List<StatDTO> stats = statsClient.getStats(
+                event.getPublishedOn(), LocalDateTime.now(), List.of(url), true
+        );
+        saveHit(ip, url);
+        if (stats.isEmpty())
+            event.setViews(event.getViews() + 1);
 
         return event;
     }
@@ -178,6 +226,16 @@ public class EventServiceImpl implements EventService {
     private Location getLocationWithId(Location location) {
         return locationRepository.findByLatAndLon(location.getLat(), location.getLon())
                 .orElseGet(() -> locationRepository.save(location));
+    }
+
+    private void saveHit(String ip, String url) {
+        HitDTO hitDTO = HitDTO.builder()
+                .ip(ip)
+                .uri(url)
+                .app(APP)
+                .timestamp(LocalDateTime.now())
+                .build();
+        statsClient.saveReq(hitDTO);
     }
 
 }

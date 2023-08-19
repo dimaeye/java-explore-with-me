@@ -11,13 +11,12 @@ import ru.practicum.explorewithme.ewmservice.event.model.Event;
 import ru.practicum.explorewithme.ewmservice.event.model.SortParam;
 import ru.practicum.explorewithme.ewmservice.event.service.EventService;
 import ru.practicum.explorewithme.ewmservice.event.service.FindEventsByUserParams;
-import ru.practicum.explorewithme.stats.client.StatsClient;
-import ru.practicum.explorewithme.stats.dto.HitDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.net.Inet6Address;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 public class PublicEventController {
 
     private final EventService eventService;
-    private final StatsClient statsClient;
 
     @GetMapping
     public List<EventDTO<CategoryDTO>> getAllEvents(
@@ -52,6 +50,8 @@ public class PublicEventController {
                     new ValidationException("Неизвестный параметр сортировки " + sortParam)
             );
         }
+        if (startLocal != null && endLocal != null && endLocal.isBefore(startLocal))
+            throw new ValidationException("rangeEnd is before rangeStart");
 
         FindEventsByUserParams findEventsByUserParams = FindEventsByUserParams.builder()
                 .sort(sort)
@@ -65,27 +65,13 @@ public class PublicEventController {
                 .size(size)
                 .build();
 
-        List<Event> events = eventService.getAllEvents(findEventsByUserParams);
-        saveHit(request.getRemoteAddr(), request.getRequestURI());
-
+        List<Event> events = eventService.getAllEvents(findEventsByUserParams, request.getRemoteAddr());
         return events.stream().map(EventMapper::toEventDTO).collect(Collectors.toList());
     }
 
     @GetMapping("/{eventId}")
     public EventDTO<CategoryDTO> getEventById(@PathVariable Integer eventId, HttpServletRequest request) {
-        Event event = eventService.getEventById(eventId);
-        saveHit(request.getRemoteAddr(), request.getRequestURI());
-
+        Event event = eventService.getEventById(eventId, request.getRemoteAddr());
         return EventMapper.toEventDTO(event);
-    }
-
-    private void saveHit(String ip, String path) {
-        HitDTO hitDTO = HitDTO.builder()
-                .ip(ip)
-                .uri(path)
-                .app("main")
-                .timestamp(LocalDateTime.now())
-                .build();
-//        statsClient.saveReq(hitDTO);
     }
 }

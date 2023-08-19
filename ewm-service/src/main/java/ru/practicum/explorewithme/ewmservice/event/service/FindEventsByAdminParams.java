@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.jpa.domain.Specification;
 import ru.practicum.explorewithme.ewmservice.event.model.Event;
+import ru.practicum.explorewithme.ewmservice.event.model.EventState;
 
 import javax.persistence.criteria.Predicate;
 import java.time.LocalDateTime;
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 public class FindEventsByAdminParams {
     private List<Integer> users;
-    private List<String> states;
+    private List<EventState> states;
     private List<Integer> categories;
     private LocalDateTime startLocal;
     private LocalDateTime endLocal;

@@ -7,7 +7,10 @@ import ru.practicum.explorewithme.ewmservice.category.model.Category;
 import ru.practicum.explorewithme.ewmservice.event.dto.EventDTO;
 import ru.practicum.explorewithme.ewmservice.event.dto.EventShortDTO;
 import ru.practicum.explorewithme.ewmservice.event.model.Event;
+import ru.practicum.explorewithme.ewmservice.event.model.EventState;
 import ru.practicum.explorewithme.ewmservice.user.mapper.UserMapper;
+
+import java.util.Optional;
 
 @UtilityClass
 public class EventMapper {
@@ -62,5 +65,14 @@ public class EventMapper {
             eventBuilder.location(LocationMapper.toLocation(eventDTO.getLocation()));
 
         return eventBuilder.build();
+    }
+
+    public static Optional<EventState> eventStateFromStr(String eventState) {
+        for (EventState state : EventState.values()) {
+            if (state.name().equalsIgnoreCase(eventState)) {
+                return Optional.of(state);
+            }
+        }
+        return Optional.empty();
     }
 }

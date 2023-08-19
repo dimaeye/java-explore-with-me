@@ -23,9 +23,9 @@ public interface EventService {
     //#endregion
 
     //#region Public
-    List<Event> getAllEvents(FindEventsByUserParams findEventsByUserParams);
+    List<Event> getAllEvents(FindEventsByUserParams findEventsByUserParams, String ip);
 
-    Event getEventById(int eventId);
+    Event getEventById(int eventId, String ip);
     //#endregion
 
 

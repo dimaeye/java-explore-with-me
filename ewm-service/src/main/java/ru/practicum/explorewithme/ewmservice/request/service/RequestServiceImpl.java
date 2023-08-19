@@ -100,7 +100,7 @@ public class RequestServiceImpl implements RequestService {
         Event event = eventRepository.findEventByIdAndInitiatorId(eventId, userId)
                 .orElseThrow(() -> new EventNotFoundException(eventId, userId));
 
-        if (event.getParticipantLimit() == 0 || event.getRequestModeration())
+        if (event.getParticipantLimit() == 0 || !event.getRequestModeration())
             return Collections.emptyList();
         if (event.getConfirmedRequests() >= event.getParticipantLimit())
             throw new BadRequestStateException("Превышен лимит участия");
