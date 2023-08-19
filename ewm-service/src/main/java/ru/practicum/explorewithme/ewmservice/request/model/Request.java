@@ -2,7 +2,6 @@ package ru.practicum.explorewithme.ewmservice.request.model;
 
 import lombok.*;
 import ru.practicum.explorewithme.ewmservice.event.model.Event;
-import ru.practicum.explorewithme.ewmservice.event.model.EventState;
 import ru.practicum.explorewithme.ewmservice.user.model.User;
 
 import javax.persistence.*;
