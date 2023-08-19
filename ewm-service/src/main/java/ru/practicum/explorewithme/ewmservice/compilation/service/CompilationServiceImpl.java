@@ -23,6 +23,15 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public Compilation createCompilation(Compilation compilation) {
+        if (compilation.getEvents() != null && !compilation.getEvents().isEmpty())
+            compilation.setEvents(
+                    new HashSet<>(
+                            eventRepository.findAllByIdIn(compilation.getEvents().stream()
+                                    .map(Event::getId)
+                                    .collect(Collectors.toList()))
+                    )
+            );
+
         return compilationRepository.save(compilation);
     }
 

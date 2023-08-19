@@ -43,7 +43,8 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public Category updateCategory(int categoryId, Category category) {
         Category currentCategory = getCategory(categoryId);
-
+        if (currentCategory.getName().equals(category.getName()))
+            return currentCategory;
         if (categoryRepository.findByName(category.getName()).isPresent())
             throw new CategoryChangesException("Категория с таким же именем уже создана");
 
