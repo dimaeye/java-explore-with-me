@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.explorewithme.ewmservice.user.exception.UserConflictException;
 import ru.practicum.explorewithme.ewmservice.user.model.User;
 import ru.practicum.explorewithme.ewmservice.user.repository.UserRepository;
 
@@ -19,6 +20,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User createUser(User user) {
+        if (userRepository.findByName(user.getName()).isPresent())
+            throw new UserConflictException("Пользователь с именем " + user.getName() + " уже существует");
         return userRepository.save(user);
     }
 

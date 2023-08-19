@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class EditableCompilationDTO {
     private Boolean pinned;
-    @NotBlank
     @Size(min = 1, max = 50)
     private String title;
     private List<Integer> events;

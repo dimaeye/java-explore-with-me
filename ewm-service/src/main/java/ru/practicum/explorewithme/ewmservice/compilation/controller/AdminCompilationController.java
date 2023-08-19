@@ -11,6 +11,7 @@ import ru.practicum.explorewithme.ewmservice.compilation.model.Compilation;
 import ru.practicum.explorewithme.ewmservice.compilation.service.CompilationService;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 
 @RestController
 @RequestMapping("/admin/compilations")
@@ -23,6 +24,8 @@ public class AdminCompilationController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CompilationDTO add(@Valid @RequestBody EditableCompilationDTO editableCompilationDTO) {
+        if (editableCompilationDTO.getTitle() == null || editableCompilationDTO.getTitle().isBlank())
+            throw new ValidationException("Название подборки не может быть пустым");
         Compilation compilation =
                 compilationService.createCompilation(CompilationMapper.toCompilation(editableCompilationDTO));
 
