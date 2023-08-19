@@ -9,15 +9,13 @@ services:
     depends_on:
       - stats-db
     environment:
-      #      - TZ=Europe/Moscow
-      - DATASOURCE_URL=jdbc:postgresql://db:5432/stats
+      - TZ=Europe/Moscow
+      - DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
       - DB_USER=test
       - DB_PASSWORD=test
       - SERVER_PORT=9090
-
   stats-db:
-#    image: postgres:14-alpine
-    image: postgres:13.7-alpine
+    image: postgres:14-alpine
     container_name: stats_db
     ports:
       - "6541:5432"
@@ -28,9 +26,29 @@ services:
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
   ewm-service:
-    image: amazoncorretto:11
+    build: ./ewm-service
+    image: ewm_service_image
+    container_name: ewm_service
     ports:
       - "8080:8080"
-
+    depends_on:
+      - stats-server
+      - ewm-db
+    environment:
+      - TZ=Europe/Moscow
+      - DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+      - STATS_SERVER_URL=http://stats-server:9090
+      - DB_USER=test
+      - DB_PASSWORD=test
+      - SERVER_PORT=8080
   ewm-db:
-    image: postgres:13.7-alpine
+    image: postgres:14-alpine
+    container_name: ewm_db
+    ports:
+      - "6540:5432"
+    volumes:
+      - /var/lib/postgresql/data-ewm/
+    environment:
+      - POSTGRES_DB=ewm
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test

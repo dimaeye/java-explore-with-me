@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name  VARCHAR(255) NOT NULL,
+    name  VARCHAR(512) NOT NULL,
     email VARCHAR(512) NOT NULL,
 
     CONSTRAINT UQ_USER_NAME UNIQUE (name),
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users
 CREATE TABLE IF NOT EXISTS categories
 (
     id   BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(200) NOT NULL,
 
     CONSTRAINT UQ_CATEGORY_NAME UNIQUE (name)
 );
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS events
     annotation         VARCHAR(2000)               NOT NULL,
     category_id        BIGINT                      NOT NULL,
     confirmed_requests BIGINT,
-    description        VARCHAR(7000)               NOT NULL,
+    description        CHARACTER VARYING           NOT NULL,
     event_date         TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     location_id        BIGINT                      NOT NULL,
     paid               BOOLEAN                     NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS events
     initiator          BIGINT                      NOT NULL,
     created_on         TIMESTAMP WITHOUT TIME ZONE DEFAULT NOW(),
     published_on       TIMESTAMP WITHOUT TIME ZONE default NULL,
-    state              VARCHAR(9)                  NOT NULL,
+    state              VARCHAR(120)                  NOT NULL,
     views              BIGINT                      NOT NULL,
 
     CONSTRAINT fk_events_to_categories FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE,
@@ -63,7 +63,7 @@ CREATE TABLE IF NOT EXISTS requests
 CREATE TABLE IF NOT EXISTS compilations
 (
     id     BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    title  VARCHAR(50) NOT NULL,
+    title  VARCHAR(2048) NOT NULL,
     pinned BOOLEAN     NOT NULL,
 
     CONSTRAINT UQ_COMPILATION_TITLE UNIQUE (title)
