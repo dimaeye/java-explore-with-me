@@ -8,9 +8,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface StatsClient {
-    void saveReq(HitDTO hitDTO) throws StatsClientException;
+    /**
+     * @throws StatsClientException when failed to save hit
+     */
+    void saveReq(HitDTO hitDTO);
 
+    /**
+     * @throws StatsClientException when failed to get stats
+     */
     List<StatDTO> getStats(
             LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique
-    ) throws StatsClientException;
+    );
 }

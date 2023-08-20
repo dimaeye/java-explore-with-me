@@ -128,7 +128,7 @@ public class EventServiceImpl implements EventService {
             }
         } else {
             if (currentEvent.getState() == EventState.PUBLISHED)
-                throw new BadEventStateException("Событие уже опубликовано и не модет быть отменено");
+                throw new BadEventStateException("Событие уже опубликовано и не может быть отменено");
             currentEvent.setState(EventState.CANCELED);
         }
 

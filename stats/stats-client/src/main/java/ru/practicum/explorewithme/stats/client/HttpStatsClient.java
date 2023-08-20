@@ -32,7 +32,7 @@ public class HttpStatsClient implements StatsClient {
 
 
     @Override
-    public void saveReq(HitDTO hitDTO) throws StatsClientException {
+    public void saveReq(HitDTO hitDTO) {
         HttpEntity<HitDTO> requestEntity = new HttpEntity<>(hitDTO);
 
         try {
@@ -43,9 +43,7 @@ public class HttpStatsClient implements StatsClient {
     }
 
     @Override
-    public List<StatDTO> getStats(
-            LocalDateTime start, LocalDateTime end, @Nullable List<String> uris, Boolean unique
-    ) throws StatsClientException {
+    public List<StatDTO> getStats(LocalDateTime start, LocalDateTime end, @Nullable List<String> uris, Boolean unique) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString("/stats")
                 .queryParam("start", start.format(DATE_TIME_FORMATTER))
                 .queryParam("end", end.format(DATE_TIME_FORMATTER))
