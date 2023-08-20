@@ -52,13 +52,13 @@ CREATE TABLE IF NOT EXISTS events
 );
 
 CREATE INDEX IF NOT EXISTS index_category_id
-    ON public.events USING btree
+    ON events USING btree
     (category_id ASC NULLS LAST);
 CREATE INDEX IF NOT EXISTS index_initiator
-    ON public.events USING btree
+    ON events USING btree
     (initiator ASC NULLS LAST);
 CREATE INDEX IF NOT EXISTS index_location_id
-    ON public.events USING btree
+    ON events USING btree
     (location_id ASC NULLS LAST);
 
 DROP TABLE IF EXISTS requests CASCADE;
