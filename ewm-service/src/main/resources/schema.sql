@@ -51,6 +51,16 @@ CREATE TABLE IF NOT EXISTS events
     CONSTRAINT fk_events_to_users FOREIGN KEY (initiator) REFERENCES users (id) ON DELETE CASCADE
 );
 
+CREATE INDEX IF NOT EXISTS index_category_id
+    ON public.events USING btree
+    (category_id ASC NULLS LAST);
+CREATE INDEX IF NOT EXISTS index_initiator
+    ON public.events USING btree
+    (initiator ASC NULLS LAST);
+CREATE INDEX IF NOT EXISTS index_location_id
+    ON public.events USING btree
+    (location_id ASC NULLS LAST);
+
 DROP TABLE IF EXISTS requests CASCADE;
 CREATE TABLE IF NOT EXISTS requests
 (

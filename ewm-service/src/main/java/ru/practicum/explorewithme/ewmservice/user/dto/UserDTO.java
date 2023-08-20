@@ -13,7 +13,6 @@ import javax.validation.constraints.Size;
 @Builder
 @AllArgsConstructor
 public class UserDTO {
-    //    @JsonIgnore
     private int id;
     @NotBlank(message = "Имя не может быть пустым")
     @Size(min = 2, max = 250)
