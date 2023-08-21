@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.explorewithme.stats.dto.HitDTO;
 import ru.practicum.explorewithme.stats.dto.StatDTO;
 import ru.practicum.explorewithme.stats.server.mapper.HitMapper;
@@ -42,6 +43,9 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") Boolean unique
     ) {
+        if (start.isAfter(end))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "start is after end");
+
         List<Stat> stats = statsService.getStats(start, end, uris, unique);
 
         return stats.stream().map(StatMapper::toStatDTO).collect(Collectors.toList());
