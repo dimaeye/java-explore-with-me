@@ -1,2 +1,3 @@
 # java-explore-with-me
-Template repository for ExploreWithMe project.
+
+Ссылка на пул-реквест (feature_comments) https://github.com/dimaeye/java-explore-with-me/pull/5
