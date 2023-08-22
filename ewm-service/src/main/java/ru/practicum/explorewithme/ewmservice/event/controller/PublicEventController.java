@@ -5,6 +5,9 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.ewmservice.category.dto.CategoryDTO;
+import ru.practicum.explorewithme.ewmservice.comment.dto.CommentDTO;
+import ru.practicum.explorewithme.ewmservice.comment.mapper.CommentMapper;
+import ru.practicum.explorewithme.ewmservice.comment.service.CommentService;
 import ru.practicum.explorewithme.ewmservice.event.dto.EventDTO;
 import ru.practicum.explorewithme.ewmservice.event.mapper.EventMapper;
 import ru.practicum.explorewithme.ewmservice.event.model.Event;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 public class PublicEventController {
 
     private final EventService eventService;
+    private final CommentService commentService;
 
     @GetMapping
     public List<EventDTO<CategoryDTO>> getAllEvents(
@@ -72,5 +76,15 @@ public class PublicEventController {
     public EventDTO<CategoryDTO> getEventById(@PathVariable Integer eventId, HttpServletRequest request) {
         Event event = eventService.getEventById(eventId, request.getRemoteAddr());
         return EventMapper.toEventDTO(event);
+    }
+
+    @GetMapping("/{eventId}/comments")
+    public List<CommentDTO> getEventComments(
+            @PathVariable Integer eventId,
+            @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
+            @Positive @RequestParam(defaultValue = "10") Integer size
+    ) {
+        return commentService.getEventComments(eventId, from, size).stream()
+                .map(CommentMapper::toCommentDTO).collect(Collectors.toList());
     }
 }
