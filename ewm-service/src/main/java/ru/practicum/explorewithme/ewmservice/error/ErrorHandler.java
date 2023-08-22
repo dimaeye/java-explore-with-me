@@ -65,7 +65,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(ConflictException e) {
         return new ErrorResponse(
-                HttpStatus.NOT_FOUND,
+                HttpStatus.CONFLICT,
                 e.getMessage(),
                 "Entity change conflict",
                 LocalDateTime.now()

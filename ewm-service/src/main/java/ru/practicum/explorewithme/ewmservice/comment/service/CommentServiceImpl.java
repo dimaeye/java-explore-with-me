@@ -40,7 +40,7 @@ public class CommentServiceImpl implements CommentService {
 
         if (event.getState() != EventState.PUBLISHED)
             throw new BadEventStateException("Событие должно быть опубликовано");
-        if (event.getInitiator().equals(user))
+        if (event.getInitiator().getId() == user.getId())
             throw new BadEventStateException("Пользователь не может оставлять комментарии к событию если он инициатор");
 
         Request request = requestRepository.findByEventIdAndRequesterId(eventId, userId)
