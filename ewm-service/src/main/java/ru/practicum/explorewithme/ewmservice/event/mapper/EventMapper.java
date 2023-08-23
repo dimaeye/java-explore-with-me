@@ -46,6 +46,7 @@ public class EventMapper {
                 .paid(event.getPaid())
                 .title(event.getTitle())
                 .views(event.getViews())
+                .commentsCount(event.getCommentsCount())
                 .build();
     }
 
