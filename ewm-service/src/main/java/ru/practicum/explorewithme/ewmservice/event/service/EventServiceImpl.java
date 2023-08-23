@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.ewmservice.category.exception.CategoryNotFoundException;
 import ru.practicum.explorewithme.ewmservice.category.model.Category;
 import ru.practicum.explorewithme.ewmservice.category.repository.CategoryRepository;
+import ru.practicum.explorewithme.ewmservice.comment.model.ICommentCount;
+import ru.practicum.explorewithme.ewmservice.comment.repository.CommentRepository;
 import ru.practicum.explorewithme.ewmservice.event.exception.BadEventStateException;
 import ru.practicum.explorewithme.ewmservice.event.exception.EventNotFoundException;
 import ru.practicum.explorewithme.ewmservice.event.model.Event;
@@ -40,6 +42,7 @@ public class EventServiceImpl implements EventService {
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -150,6 +153,16 @@ public class EventServiceImpl implements EventService {
                 .filter(event -> event.getState() == EventState.PUBLISHED)
                 .collect(Collectors.toMap(Event::getId, Function.identity()));
 
+        Map<Integer, Long> commentsCount = commentRepository
+                .countTotalCommentsByEventIds(
+                        publishedEvents.values().stream().map(Event::getId).collect(Collectors.toList())
+                ).stream()
+                .collect(Collectors.toMap(ICommentCount::getEventId, ICommentCount::getTotalComment));
+
+        for (Event event : publishedEvents.values())
+            if (commentsCount.containsKey(event.getId()))
+                event.setCommentsCount(commentsCount.get(event.getId()));
+
         if (!publishedEvents.isEmpty()) {
             Map<Integer, StatDTO> stats = statsClient.getStats(
                     publishedEvents.values().stream().map(Event::getPublishedOn).sorted().findFirst().get(),
@@ -189,6 +202,12 @@ public class EventServiceImpl implements EventService {
         saveHit(ip, url);
         if (stats.isEmpty())
             event.setViews(event.getViews() + 1);
+
+        List<ICommentCount> commentCounts = commentRepository.countTotalCommentsByEventIds(List.of(event.getId()));
+        if (!commentCounts.isEmpty())
+            event.setCommentsCount(commentCounts.get(0).getTotalComment());
+        else
+            event.setCommentsCount(0L);
 
         return event;
     }

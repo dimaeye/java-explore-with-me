@@ -1,9 +1,11 @@
 package ru.practicum.explorewithme.ewmservice.comment.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.explorewithme.ewmservice.comment.exception.CommentConflictException;
 import ru.practicum.explorewithme.ewmservice.comment.exception.CommentNotFoundException;
 import ru.practicum.explorewithme.ewmservice.comment.model.Comment;
 import ru.practicum.explorewithme.ewmservice.comment.repository.CommentRepository;
@@ -19,6 +21,7 @@ import ru.practicum.explorewithme.ewmservice.user.exception.UserNotFoundExceptio
 import ru.practicum.explorewithme.ewmservice.user.model.User;
 import ru.practicum.explorewithme.ewmservice.user.repository.UserRepository;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,6 +33,10 @@ public class CommentServiceImpl implements CommentService {
     private final EventRepository eventRepository;
     private final RequestRepository requestRepository;
     private final UserRepository userRepository;
+
+
+    @Value("${comments.edit-disable-time-seconds}")
+    private int editDisableTimeSeconds;
 
     @Override
     @Transactional
@@ -62,10 +69,17 @@ public class CommentServiceImpl implements CommentService {
     public Comment updateComment(int userId, int commentId, Comment comment) {
         Comment currentComment = getComment(userId, commentId);
 
-        if (!comment.getText().isBlank())
+        LocalDateTime edited = LocalDateTime.now();
+        if (currentComment.getEdited() == null
+                || Duration.between(currentComment.getEdited(), edited).getSeconds() > editDisableTimeSeconds) {
             currentComment.setText(comment.getText());
+            currentComment.setEdited(edited);
+        } else
+            throw new CommentConflictException(
+                    "Редактировать комментарий запрещено в течение " + editDisableTimeSeconds + " секунд"
+            );
 
-        return commentRepository.save(currentComment);
+        return currentComment;
     }
 
     @Override
@@ -78,10 +92,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public void deleteComment(int commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new CommentNotFoundException(commentId));
-
-        commentRepository.deleteById(comment.getId());
+        if (commentRepository.existsById(commentId))
+            commentRepository.deleteById(commentId);
+        else
+            throw new CommentNotFoundException(commentId);
     }
 
     @Override

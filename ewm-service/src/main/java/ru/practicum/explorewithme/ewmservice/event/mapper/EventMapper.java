@@ -15,7 +15,7 @@ import java.util.Optional;
 @UtilityClass
 public class EventMapper {
 
-    public static EventDTO<CategoryDTO> toEventDTO(Event event) {
+    public EventDTO<CategoryDTO> toEventDTO(Event event) {
         return EventDTO.<CategoryDTO>builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
@@ -33,10 +33,11 @@ public class EventMapper {
                 .publishedOn(event.getPublishedOn())
                 .state(event.getState())
                 .views(event.getViews())
+                .commentsCount(event.getCommentsCount())
                 .build();
     }
 
-    public static EventShortDTO toEventShortDTO(Event event) {
+    public EventShortDTO toEventShortDTO(Event event) {
         return EventShortDTO.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())

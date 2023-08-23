@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.ewmservice.comment.service;
 
+import ru.practicum.explorewithme.ewmservice.comment.exception.CommentConflictException;
 import ru.practicum.explorewithme.ewmservice.comment.exception.CommentNotFoundException;
 import ru.practicum.explorewithme.ewmservice.comment.model.Comment;
 import ru.practicum.explorewithme.ewmservice.event.exception.BadEventStateException;
@@ -20,6 +21,7 @@ public interface CommentService {
 
     /**
      * @throws CommentNotFoundException when comment is not found
+     * @throws CommentConflictException if disable edit comment by time
      */
     Comment updateComment(int userId, int commentId, Comment comment);
 

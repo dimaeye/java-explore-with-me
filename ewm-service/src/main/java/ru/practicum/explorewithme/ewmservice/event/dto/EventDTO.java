@@ -47,4 +47,5 @@ public class EventDTO<T> {
     private String title;
     private Integer views;
     private String stateAction;
+    private Long commentsCount;
 }

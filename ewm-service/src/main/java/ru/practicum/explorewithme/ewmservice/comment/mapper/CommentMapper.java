@@ -6,20 +6,21 @@ import ru.practicum.explorewithme.ewmservice.comment.model.Comment;
 
 @UtilityClass
 public class CommentMapper {
-    public static CommentDTO toCommentDTO(Comment comment) {
-        return CommentDTO.builder()
+    public CommentDTO.Response toCommentDTOResponse(Comment comment) {
+        return CommentDTO.Response.builder()
                 .id(comment.getId())
                 .eventId(comment.getEvent().getId())
                 .authorId(comment.getAuthor().getId())
                 .authorName(comment.getAuthor().getName())
                 .text(comment.getText())
                 .created(comment.getCreated())
+                .edited(comment.getEdited())
                 .build();
     }
 
-    public static Comment toComment(CommentDTO commentDTO) {
+    public Comment toComment(CommentDTO.Request commentDTORequest) {
         return Comment.builder()
-                .text(commentDTO.getText())
+                .text(commentDTORequest.getText())
                 .build();
     }
 }

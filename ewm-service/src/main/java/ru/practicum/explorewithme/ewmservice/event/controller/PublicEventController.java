@@ -79,12 +79,12 @@ public class PublicEventController {
     }
 
     @GetMapping("/{eventId}/comments")
-    public List<CommentDTO> getEventComments(
+    public List<CommentDTO.Response> getEventComments(
             @PathVariable Integer eventId,
             @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
             @Positive @RequestParam(defaultValue = "10") Integer size
     ) {
         return commentService.getEventComments(eventId, from, size).stream()
-                .map(CommentMapper::toCommentDTO).collect(Collectors.toList());
+                .map(CommentMapper::toCommentDTOResponse).collect(Collectors.toList());
     }
 }
