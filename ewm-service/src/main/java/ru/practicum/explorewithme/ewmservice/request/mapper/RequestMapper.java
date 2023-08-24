@@ -6,7 +6,7 @@ import ru.practicum.explorewithme.ewmservice.request.model.Request;
 
 @UtilityClass
 public class RequestMapper {
-    public static RequestDTO toRequestDTO(Request request) {
+    public RequestDTO toRequestDTO(Request request) {
         return RequestDTO.builder()
                 .id(request.getId())
                 .requester(request.getRequester().getId())

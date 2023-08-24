@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @UtilityClass
 public class CompilationMapper {
-    public static CompilationDTO toCompilationDTO(Compilation compilation) {
+    public CompilationDTO toCompilationDTO(Compilation compilation) {
         return CompilationDTO.builder()
                 .id(compilation.getId())
                 .pinned(compilation.getPinned() != null ? compilation.getPinned() : false)
@@ -25,7 +25,7 @@ public class CompilationMapper {
                 .build();
     }
 
-    public static Compilation toCompilation(EditableCompilationDTO editableCompilationDTO) {
+    public Compilation toCompilation(EditableCompilationDTO editableCompilationDTO) {
         Compilation.CompilationBuilder compilationBuilder =
                 Compilation.builder()
                         .pinned(editableCompilationDTO.getPinned() != null ? editableCompilationDTO.getPinned() : false)

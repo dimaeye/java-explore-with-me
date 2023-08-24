@@ -21,4 +21,5 @@ public class EventShortDTO {
     private Boolean paid;
     private String title;
     private Integer views;
+    private Long commentsCount;
 }

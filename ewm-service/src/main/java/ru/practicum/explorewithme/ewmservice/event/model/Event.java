@@ -53,4 +53,6 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventState state;
     private Integer views;
+    @Transient
+    private Long commentsCount;
 }

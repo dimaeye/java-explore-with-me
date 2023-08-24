@@ -23,6 +23,7 @@ public class ErrorHandler {
     @ExceptionHandler(value = {ValidationException.class, IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationAndIllegalArgExceptions(RuntimeException e) {
+        log.error("Get ValidationAndIllegalArgExceptions {}", e.getMessage(), e);
         return new ErrorResponse(
                 HttpStatus.BAD_REQUEST,
                 e.getMessage(),
@@ -34,6 +35,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        log.error("Get MethodArgumentNotValidException {}", e.getMessage(), e);
         List<String> errors = new ArrayList<>();
         for (FieldError error : e.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
@@ -53,6 +55,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(NotFoundException e) {
+        log.warn("Get NotFoundException {}", e.getMessage(), e);
         return new ErrorResponse(
                 HttpStatus.NOT_FOUND,
                 e.getMessage(),
@@ -64,8 +67,9 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleConflictException(ConflictException e) {
+        log.error("Get ConflictException {}", e.getMessage(), e);
         return new ErrorResponse(
-                HttpStatus.NOT_FOUND,
+                HttpStatus.CONFLICT,
                 e.getMessage(),
                 "Entity change conflict",
                 LocalDateTime.now()
